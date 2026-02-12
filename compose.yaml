@@ -1,0 +1,56 @@
+services:
+  nodered:
+    image: "nodered/node-red:latest"
+    restart: always
+    environment:
+      - TZ=America/Sao_Paulo
+      - NODE_OPTIONS=--max_old_space_size=512
+      - NODE_RED_ADMIN_PASSWORD_HASH=${NODE_RED_ADMIN_PASSWORD_HASH}
+      - DOMAIN=${DOMAIN}
+    volumes:
+      - "nodered-data:/data"
+      - "./nodered/settings.js:/data/settings.js:ro"
+    depends_on:
+      - mosquitto
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: "1.0"
+    healthcheck:
+      test:
+        - CMD
+        - curl
+        - "-f"
+        - "http://127.0.0.1:1880"
+      interval: 10s
+      timeout: 10s
+      retries: 5
+  mosquitto:
+    image: "eclipse-mosquitto:latest"
+    restart: always
+    volumes:
+      - "mosquitto-data:/mosquitto/data"
+      - "mosquitto-log:/mosquitto/log"
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "0.5"
+    healthcheck:
+      test:
+        - CMD
+        - mosquitto_sub
+        - "-h"
+        - 127.0.0.1
+        - "-t"
+        - healthcheck
+        - "-C"
+        - "1"
+      interval: 30s
+      timeout: 10s
+      retries: 5
+volumes:
+  nodered-data: null
+  mosquitto-data: null
+  mosquitto-log: null
