@@ -33,6 +33,7 @@ services:
     ports:
       - "1883:1883"
     volumes:
+      - "./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro"
       - "mosquitto-data:/mosquitto/data"
       - "mosquitto-log:/mosquitto/log"
     deploy:
@@ -43,13 +44,12 @@ services:
     healthcheck:
       test:
         - CMD
-        - mosquitto_sub
+        - mosquitto_pub
         - "-h"
         - 127.0.0.1
         - "-t"
         - healthcheck
-        - "-C"
-        - "1"
+        - "-n"
       interval: 30s
       timeout: 10s
       retries: 5
