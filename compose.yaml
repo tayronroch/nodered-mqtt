@@ -20,8 +20,9 @@ services:
     healthcheck:
       test:
         - CMD
-        - curl
-        - "-f"
+        - wget
+        - "--spider"
+        - "-q"
         - "http://127.0.0.1:1880"
       interval: 10s
       timeout: 10s
@@ -29,6 +30,8 @@ services:
   mosquitto:
     image: "eclipse-mosquitto:latest"
     restart: always
+    ports:
+      - "1883:1883"
     volumes:
       - "mosquitto-data:/mosquitto/data"
       - "mosquitto-log:/mosquitto/log"
