@@ -1,6 +1,6 @@
 services:
   nodered:
-    image: "nodered/node-red:latest"
+    build: ./nodered
     restart: always
     environment:
       - TZ=America/Sao_Paulo
